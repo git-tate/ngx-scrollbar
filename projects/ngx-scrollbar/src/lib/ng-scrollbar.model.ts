@@ -102,3 +102,8 @@ export interface NgScrollbarState {
   // Flag used to prevent text selection on content
   scrollbarClicked?: boolean;
 }
+
+export interface NgScrollbarStateChanged {
+  old: NgScrollbarState;
+  new: NgScrollbarState;
+}

@@ -27,7 +27,8 @@ import {
   ScrollbarPosition,
   ScrollbarVisibility,
   NgScrollbarState,
-  ScrollbarPointerEventsMethod
+  ScrollbarPointerEventsMethod,
+  NgScrollbarStateChanged
 } from './ng-scrollbar.model';
 import { ScrollbarManager } from './utils/scrollbar-manager';
 
@@ -177,6 +178,8 @@ export class NgScrollbar implements OnInit, AfterViewChecked, OnDestroy {
   viewport!: ScrollViewport;
   /** Set of attributes added on the scrollbar wrapper */
   state: NgScrollbarState = {};
+  /** Steam that emits when scrollbar is updated */
+  @Output() stateChanged = new EventEmitter<NgScrollbarStateChanged>();
   /** Stream that destroys components' observables */
   private readonly destroyed = new Subject<void>();
 
@@ -237,7 +240,9 @@ export class NgScrollbar implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private setState(state: NgScrollbarState) {
-    this.state = { ...this.state, ...state };
+    const oldState = {...this.state};
+    this.state = { ...oldState, ...state };
+    this.stateChanged.emit({old: {...oldState}, new: {...this.state}});
     this.changeDetectorRef.detectChanges();
   }
 
