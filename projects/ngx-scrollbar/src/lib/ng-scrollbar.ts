@@ -31,6 +31,7 @@ import {
   NgScrollbarStateChanged
 } from './ng-scrollbar.model';
 import { ScrollbarManager } from './utils/scrollbar-manager';
+import isEqual from 'lodash.isequal';
 
 @Component({
   selector: 'ng-scrollbar',
@@ -240,10 +241,12 @@ export class NgScrollbar implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   private setState(state: NgScrollbarState) {
-    const oldState = {...this.state};
-    this.state = { ...oldState, ...state };
-    this.stateChanged.emit({old: {...oldState}, new: {...this.state}});
-    this.changeDetectorRef.detectChanges();
+    if (!isEqual(this.state, state)) {
+      const oldState = {...this.state};
+      this.state = { ...oldState, ...state };
+      this.stateChanged.emit({old: {...oldState}, new: {...this.state}});
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   private getScrolledByDirection(property: 'scrollLeft' | 'scrollTop') {
